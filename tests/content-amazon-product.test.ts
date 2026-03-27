@@ -66,7 +66,9 @@ describe('Amazon product extraction', () => {
       title: 'Ultra Widget',
       priceValue: 1299.99,
       currency: 'USD',
-      locale: 'en-US'
+      locale: 'en-US',
+      host: 'www.amazon.com',
+      url: 'https://www.amazon.com/dp/B012345678?th=1'
     });
   });
 
@@ -94,7 +96,9 @@ describe('Amazon product extraction', () => {
       title: 'Tea Kettle',
       priceValue: 29.5,
       currency: 'GBP',
-      locale: 'en-GB'
+      locale: 'en-GB',
+      host: 'www.amazon.co.uk',
+      url: 'https://www.amazon.co.uk/gp/product/B0UKTEST01'
     });
   });
 
@@ -120,7 +124,9 @@ describe('Amazon product extraction', () => {
       title: 'Kaffeemühle',
       priceValue: 129.95,
       currency: 'EUR',
-      locale: 'de-DE'
+      locale: 'de-DE',
+      host: 'www.amazon.de',
+      url: 'https://www.amazon.de/gp/product/B0DETEST01'
     });
   });
 
@@ -145,7 +151,9 @@ describe('Amazon product extraction', () => {
       title: 'Lampe de bureau',
       priceValue: 49.9,
       currency: 'EUR',
-      locale: 'fr-FR'
+      locale: 'fr-FR',
+      host: 'www.amazon.fr',
+      url: 'https://www.amazon.fr/gp/aw/d/B0FRTEST01'
     });
   });
 

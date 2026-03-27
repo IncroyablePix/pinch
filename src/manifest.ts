@@ -50,7 +50,7 @@ export function createManifest(target: BrowserTarget): ExtensionManifest {
       service_worker: 'background.js',
       type: 'module'
     },
-    permissions: ['storage'],
+    permissions: ['storage', 'tabs'],
     host_permissions: AMAZON_MATCH_PATTERNS,
     content_scripts: [
       {

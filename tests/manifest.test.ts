@@ -24,4 +24,18 @@ describe('createManifest', () => {
     });
     expect(manifest.content_scripts[0]?.js).toEqual(['content.js']);
   });
+
+  it('limits Amazon host permissions and content matches to the supported domains', () => {
+    const manifest = createManifest('chromium');
+
+    expect(manifest.host_permissions).toEqual([
+      'https://www.amazon.com/*',
+      'https://www.amazon.co.uk/*',
+      'https://www.amazon.de/*',
+      'https://www.amazon.fr/*'
+    ]);
+    expect(manifest.content_scripts[0]?.matches).toEqual(
+      manifest.host_permissions
+    );
+  });
 });

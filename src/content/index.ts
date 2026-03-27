@@ -1,29 +1,65 @@
-const browserTarget = __BROWSER_TARGET__ === 'firefox' ? 'Firefox' : 'Chromium';
-const bannerId = 'pinch-extension-banner';
+import {
+  extractAmazonProductData,
+  isSupportedAmazonProductPage,
+  type AmazonProductData
+} from './amazonProduct';
+const REQUEST_TYPE = 'pinch:get-product-data';
+const RESPONSE_TYPE = 'pinch:product-data';
 
-function ensureBanner(): void {
-  if (document.getElementById(bannerId)) {
+declare global {
+  interface Window {
+    __PINCH_AMAZON_PRODUCT_DATA__?: AmazonProductData | null;
+  }
+}
+
+function getCurrentProductData(): AmazonProductData | null {
+  return extractAmazonProductData(document, new URL(window.location.href));
+}
+
+function setPublishedProductData(
+  productData: AmazonProductData | null
+): AmazonProductData | null {
+  window.__PINCH_AMAZON_PRODUCT_DATA__ = productData;
+  window.dispatchEvent(
+    new CustomEvent(RESPONSE_TYPE, {
+      detail: productData
+    })
+  );
+
+  return productData;
+}
+
+function publishProductData(): AmazonProductData | null {
+  return setPublishedProductData(getCurrentProductData());
+}
+
+function initializeContentScript(): void {
+  const pageUrl = new URL(window.location.href);
+
+  if (!isSupportedAmazonProductPage(pageUrl)) {
+    setPublishedProductData(null);
     return;
   }
+  publishProductData();
 
-  const banner = document.createElement('aside');
-  banner.id = bannerId;
-  banner.textContent = `Pinch content script active in ${browserTarget}.`;
-  banner.style.position = 'fixed';
-  banner.style.right = '1rem';
-  banner.style.bottom = '1rem';
-  banner.style.padding = '0.75rem 1rem';
-  banner.style.borderRadius = '999px';
-  banner.style.background = '#1f2937';
-  banner.style.color = '#ffffff';
-  banner.style.fontFamily = 'system-ui, sans-serif';
-  banner.style.fontSize = '14px';
-  banner.style.zIndex = '2147483647';
-  document.body.appendChild(banner);
+  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+    if (message?.type !== REQUEST_TYPE) {
+      return undefined;
+    }
+
+    sendResponse({
+      type: RESPONSE_TYPE,
+      payload: publishProductData()
+    });
+
+    return false;
+  });
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', ensureBanner, { once: true });
+  document.addEventListener('DOMContentLoaded', initializeContentScript, {
+    once: true
+  });
 } else {
-  ensureBanner();
+  initializeContentScript();
 }

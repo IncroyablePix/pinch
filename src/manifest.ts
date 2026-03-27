@@ -28,6 +28,13 @@ export interface ExtensionManifest {
   };
 }
 
+const AMAZON_MATCH_PATTERNS = [
+  'https://www.amazon.com/*',
+  'https://www.amazon.co.uk/*',
+  'https://www.amazon.de/*',
+  'https://www.amazon.fr/*'
+];
+
 export function createManifest(target: BrowserTarget): ExtensionManifest {
   const manifest: ExtensionManifest = {
     manifest_version: 3,
@@ -44,10 +51,10 @@ export function createManifest(target: BrowserTarget): ExtensionManifest {
       type: 'module'
     },
     permissions: ['storage'],
-    host_permissions: ['<all_urls>'],
+    host_permissions: AMAZON_MATCH_PATTERNS,
     content_scripts: [
       {
-        matches: ['<all_urls>'],
+        matches: AMAZON_MATCH_PATTERNS,
         js: ['content.js'],
         run_at: 'document_idle'
       }
